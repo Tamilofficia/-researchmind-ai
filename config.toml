@@ -1,0 +1,15 @@
+[theme]
+# Primary color for buttons, active tabs, etc.
+primaryColor = "#3b82f6"
+
+# Background color for the main content area (Deep Navy Blue)
+backgroundColor = "#0a192f"
+
+# Background color for sidebar and most interactive widgets
+secondaryBackgroundColor = "#112240"
+
+# Text color
+textColor = "#e2e8f0"
+
+# Font family
+font = "sans serif"
