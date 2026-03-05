@@ -155,7 +155,13 @@ if not st.session_state.logged_in:
         
         st.text_input("First Name", key="fname_input")
         st.text_input("Last Name", key="lname_input")
-        st.date_input("Date of Birth", key="dob_input")
+        import datetime
+        st.date_input(
+            "Date of Birth", 
+            min_value=datetime.date(1900, 1, 1), 
+            max_value=datetime.date.today(), 
+            key="dob_input"
+        )
         st.selectbox("Position", ["Organization", "Teacher", "Professor", "Student"], key="pos_input")
         st.text_input("Workspace Email", key="email_input")
         st.text_input("Password", type="password", key="pwd_input")
@@ -189,20 +195,31 @@ else:
             st.write("📄 Parsing document...")
             text = cached_parse_pdf(file_bytes)
             
-            st.write("🧠 Extracting claims & computing metrics...")
-            claims = cached_extract_claims(text)
-            metrics = cached_analyze_metrics(text)
-            
-            st.write("🔗 Mapping interactive knowledge relationships...")
-            relations = cached_detect_relations(claims)
-            graph_html = build_graph(relations) # Don't cache HTML generation, it's fast
-            
-            st.write("🔎 Performing Literature Review against ArXiv...")
-            search_query = claims[:150] if claims else "research paper"
-            arxiv_results = cached_search_arxiv(search_query)
-            verification_report = cached_verify_claims(claims, arxiv_results) if arxiv_results else "No relevant ArXiv context found."
-            
-            status.update(label="Analysis Complete! Interface is now lightning fast.", state="complete", expanded=False)
+            import time
+            try:
+                st.write("🧠 Extracting claims & computing metrics...")
+                claims = cached_extract_claims(text)
+                time.sleep(2) # Prevent Gemini Free Tier rate-limit
+                
+                metrics = cached_analyze_metrics(text)
+                time.sleep(2)
+                
+                st.write("🔗 Mapping interactive knowledge relationships...")
+                relations = cached_detect_relations(claims)
+                graph_html = build_graph(relations) # Don't cache HTML generation, it's fast
+                time.sleep(2)
+                
+                st.write("🔎 Performing Literature Review against ArXiv...")
+                search_query = claims[:150] if claims else "research paper"
+                arxiv_results = cached_search_arxiv(search_query)
+                verification_report = cached_verify_claims(claims, arxiv_results) if arxiv_results else "No relevant ArXiv context found."
+                
+                status.update(label="Analysis Complete! Interface is now lightning fast.", state="complete", expanded=False)
+            except Exception as e:
+                # If Gemini API gets exhausted, show a clean red warning and stop Instead of crashing the whole Streamlit app
+                status.update(label="API Rate Limit Hit", state="error", expanded=True)
+                st.error(f"**Google AI API Error:** The free tier is currently overloaded. Please wait 60 seconds and try again.\n\n`{str(e)}`")
+                st.stop()
 
         # --- TABBED INTERFACE ---
         tab1, tab2, tab3, tab4 = st.tabs(["📑 Overview", "🔎 Verification", "📈 Advanced Analytics", "🕸️ Knowledge Graph"])
