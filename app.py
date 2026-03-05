@@ -9,7 +9,8 @@ st.set_page_config(page_title="ResearchMind AI", page_icon="🧠", layout="wide"
 
 load_dotenv()
 
-from parser.parse_paper import parse_pdf
+# We changed parser to pdf_parser to fix Streamlit Cloud conflicts
+from parse_pdf.parse_paper import parse_pdf
 from ai.claim_extractor import extract_claims
 from ai.relationship import detect_relationships
 from ai.arxiv_fetcher import search_arxiv
