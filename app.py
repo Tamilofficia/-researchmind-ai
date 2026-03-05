@@ -7,7 +7,8 @@ from dotenv import load_dotenv
 # Set page config FIRST before doing anything else
 st.set_page_config(page_title="ResearchMind AI", page_icon="🧠", layout="wide")
 
-load_dotenv()
+# Force python to load the newly saved .env file and override the old key memory
+load_dotenv(override=True)
 
 # We changed parser to pdf_parser to fix Streamlit Cloud conflicts
 from parse_pdf.parse_paper import parse_pdf
