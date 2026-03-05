@@ -1,0 +1,10 @@
+streamlit
+pymupdf
+networkx
+matplotlib
+google-generativeai
+pandas
+python-dotenv
+arxiv
+plotly
+pyvis
